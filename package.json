@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hono/node-server": "^1.12.2",
     "@hono/zod-validator": "^0.2.2",
     "hono": "^4.5.10",
     "next": "14.2.7",
