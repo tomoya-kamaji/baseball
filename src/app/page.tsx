@@ -10,10 +10,10 @@ export default function Home() {
   const [name, setName] = useState<string>();
 
   useEffect(() => {
-    client.api.hello
-      .$get()
+    client.api.games
+      .$get({ query: { teamId: "1" } })
       .then((res) => res.json())
-      .then((json) => setName(json.name));
+      .then((json) => setName(json[0].venueId));
   }, []);
 
   return <p>{typeof name !== "undefined" ? `Hello ${name}!` : "Loading..."}</p>;
