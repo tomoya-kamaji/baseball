@@ -11,6 +11,9 @@ dependencies:
   '@hono/zod-validator':
     specifier: ^0.2.2
     version: 0.2.2(hono@4.5.10)(zod@3.23.8)
+  '@prisma/client':
+    specifier: ^5.19.1
+    version: 5.19.1
   hono:
     specifier: ^4.5.10
     version: 4.5.10
@@ -306,6 +309,17 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@prisma/client@5.19.1:
+    resolution: {integrity: sha512-x30GFguInsgt+4z5I4WbkZP2CGpotJMUXy+Gl/aaUjHn2o1DnLYNTA+q9XdYmAQZM8fIIkvUiA2NpgosM3fneg==}
+    engines: {node: '>=16.13'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dev: false
 
   /@rushstack/eslint-patch@1.10.4:
     resolution: {integrity: sha512-WJgX9nzTqknM393q1QJDJmoW28kUfEnybeTfVNcNAPnIx210RXm2DiXiHzfNPJNIUUb1tJnz/l4QGtJ30PgWmA==}

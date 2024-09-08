@@ -6,11 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+
+
+    "migrate": "prisma migrate dev",
+    "studio": "prisma studio",
+    "generate": "prisma generate"
   },
   "dependencies": {
     "@hono/node-server": "^1.12.2",
     "@hono/zod-validator": "^0.2.2",
+    "@prisma/client": "^5.19.1",
     "hono": "^4.5.10",
     "next": "14.2.7",
     "react": "^18",
