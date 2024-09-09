@@ -45,4 +45,23 @@ const createUser = (user: InitUser): ResultAsync<InitUser, Error> => {
   })
 }
 
-export { findUserById, createUser }
+const updateUser = (user: ActiveUser): ResultAsync<ActiveUser, Error> => {
+  return ResultAsync.fromPromise(
+    prisma.user.update({
+      where: { id: user.id },
+      data: {
+        status: UserStatus.ACTIVE
+      }
+    }),
+    () => new Error('PrismaClientError')
+  ).map(() => {
+    return {
+      id: user.id,
+      name: user.name,
+      kind: 'active',
+      teamId: user.teamId
+    } as ActiveUser
+  })
+}
+
+export { findUserById, createUser, updateUser }

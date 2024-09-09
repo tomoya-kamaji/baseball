@@ -1,4 +1,5 @@
-import { Result, err, ok } from 'neverthrow'
+import { Result, ResultAsync, err, ok } from 'neverthrow'
+import { findUserById } from './repository'
 
 type InitUser = {
   kind: 'init'
@@ -22,17 +23,65 @@ const isActiveUser = (user: User): user is ActiveUser => {
   return user.kind === 'active'
 }
 
-const joinTeam = (user: InitUser, teamId: string): Result<ActiveUser, Error> => {
-  if (teamId.length > 5) {
-    return err(new Error('チームIDは5文字以下である必要があります'))
-  }
-
-  return ok({
-    kind: 'active',
-    id: user.id,
-    name: user.name,
-    teamId: teamId
-  })
+type Input = {
+  userId: string
+  teamId: string
 }
 
-export { isInitUser, isActiveUser, type User, type InitUser, type ActiveUser, joinTeam }
+// DBから必要情報を取得した状態
+type InputCommand = {
+  kind: 'InputCommand'
+  user: InitUser
+  teamId: string
+}
+
+type JoinTeam = {
+  kind: 'JoinTeam'
+  user: ActiveUser
+}
+
+const createInputCommand =
+  () =>
+  (input: Input): ResultAsync<InputCommand, Error> => {
+    const { userId, teamId } = input
+    return findUserById(userId).andThen((user) =>
+      isInitUser(user)
+        ? ok({
+            kind: 'InputCommand',
+            user,
+            teamId
+          } satisfies InputCommand)
+        : err(new Error('既にチームに参加しています'))
+    )
+  }
+
+// チームに参加させる
+const joinTeam =
+  () =>
+  (command: InputCommand): Result<JoinTeam, Error> => {
+    const { user, teamId } = command
+    if (teamId.length > 5) {
+      return err(new Error('チームIDは5文字以下である必要があります'))
+    }
+    const activeUser: ActiveUser = {
+      kind: 'active',
+      id: user.id,
+      name: user.name,
+      teamId: teamId
+    }
+
+    return ok({
+      kind: 'JoinTeam',
+      user: activeUser
+    })
+  }
+
+export {
+  type User,
+  type InitUser,
+  type ActiveUser,
+  isInitUser,
+  isActiveUser,
+  joinTeam,
+  createInputCommand
+}
