@@ -25,13 +25,13 @@ const gamesData: Game[] = [
   }
 ]
 
-export const findGameUseCase = async (teamId?: string) => {
+export const findGameUseCase = async (teamId?: string): Promise<Game[]> => {
   // teamIdが指定されている場合は、試合データから該当する試合を取得
   if (teamId) {
-    const games = gamesData.filter(
+    const filterGames = gamesData.filter(
       (game) => game.homeTeamId === teamId || game.roadTeamId === teamId
     )
-    return games
+    return filterGames
   }
 
   return gamesData
