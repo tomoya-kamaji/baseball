@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { honoClient } from '../config'
 
 type FuriganaText = {
-  kanji: string
+  original: string
   furigana: string
 }
 
@@ -12,64 +11,59 @@ const FuriganaText = () => {
   const [text, setText] = useState('')
   const [textWithFurigana, setTextWithFurigana] = useState<FuriganaText[]>([])
   const handleSubmit = async (text: string) => {
-    const data = await honoClient.api.morphological['add-furigana'].$post({
-      json: {
-        text
+    // curl -H "Accept-Charset: utf-8" "http://localhost:5000/api/furigana?text=すもももももももものうち"
+    const response = await fetch(`http://localhost:5000/api/furigana?text=${text}`, {
+      headers: {
+        'Accept-Charset': 'utf-8'
       }
     })
-    return data
+    const data = await response.json()
+    console.log(data)
+    setTextWithFurigana(data.furiganaText || [])
   }
 
   const handleChangeText = (newText: string) => {
     setText(newText)
   }
 
-  const renderFuriganaText = () => {
-    return textWithFurigana.map((item, index) =>
-      item.furigana ? (
-        <ruby key={index}>
-          {item.kanji}
-          <rt>{item.furigana}</rt>
-        </ruby>
-      ) : (
-        <span key={index}>{item.kanji}</span>
-      )
-    )
-  }
-
   return (
-    <div style={containerStyle}>
-      <h1>ふりがな付きテキスト</h1>
-      <p style={textStyle}>{renderFuriganaText()}</p>
+    <div className="p-8 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl shadow-xl">
+      <h1 className="text-3xl font-extrabold text-white mb-6">ふりがな付きテキスト</h1>
+      <TextWithFurigana textWithFurigana={textWithFurigana} />
       <input
         type="text"
         onChange={(e) => handleChangeText(e.target.value)}
-        style={{
-          fontSize: '1.2em',
-          color: 'black', // 文字色を黒に設定
-          padding: '10px',
-          marginBottom: '10px',
-          width: '100%'
-        }}
+        className="w-full p-4 mb-6 text-lg text-gray-900 bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="テキストを入力"
       />
       <button
         onClick={() => handleSubmit(text)}
-        style={{
-          fontSize: '1.2em',
-          color: 'white', // 文字色を白に設定
-          backgroundColor: '#007BFF', // ボタンの背景色
-          padding: '10px 20px',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer'
-        }}
+        className="w-full px-6 py-3 text-lg font-semibold text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
       >
         送信
-      </button>{' '}
+      </button>
     </div>
   )
 }
 
+const TextWithFurigana: React.FC<{ textWithFurigana: FuriganaText[] }> = ({ textWithFurigana }) => {
+  return (
+    <p className="text-xl mb-6">
+      {textWithFurigana.map((item, index) =>
+        item.furigana ? (
+          <ruby key={index} className="mr-2">
+            {item.original}
+            <rt className="text-sm">{item.furigana}</rt>
+          </ruby>
+        ) : (
+          <span key={index} className="mr-2">
+            {item.original}
+          </span>
+        )
+      )}
+    </p>
+  )
+}
 const containerStyle = {
   fontFamily: 'Arial, sans-serif',
   margin: '20px',
